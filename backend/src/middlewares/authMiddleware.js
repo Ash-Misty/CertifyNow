@@ -1,9 +1,10 @@
+
 import jwt from "jsonwebtoken";
 
 const protect = (req, res, next) => {
   const authHeader = req.headers.authorization;
 
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+  if (!authHeader?.startsWith("Bearer ")) {
     return res.status(401).json({ message: "Not authorized" });
   }
 
@@ -13,9 +14,9 @@ const protect = (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.adminId = decoded.id;
     next();
-  } catch (err) {
+  } catch {
     res.status(401).json({ message: "Invalid token" });
   }
 };
 
-export default protect;   // 🔥 THIS LINE IS THE FIX
+export default protect;

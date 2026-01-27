@@ -1,3 +1,4 @@
+
 import multer from "multer";
 
 const storage = multer.memoryStorage();
@@ -13,7 +14,7 @@ const upload = multer({
     } else {
       cb(new Error("Only Excel files allowed"));
     }
-  }
+  },
 });
 
 export default upload;
