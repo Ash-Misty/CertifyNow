@@ -1,67 +1,142 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { AdminUser } from '@/types/certificate';
+import { createContext, useContext, useEffect, useState } from "react";
+import axios from "axios";
 
-interface AuthContextType {
-  user: AdminUser | null;
-  isAuthenticated: boolean;
-  login: (email: string, password: string) => Promise<boolean>;
-  register: (email: string, password: string, name: string) => Promise<boolean>;
-  logout: () => void;
-}
+const AuthContext = createContext(null);
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthProvider = ({ children }) => {
+  const [admin, setAdmin] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<AdminUser | null>(null);
-
-  const login = async (email: string, password: string): Promise<boolean> => {
-    // Mock API call - replace with actual API
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    if (email && password) {
-      setUser({
-        id: '1',
-        email,
-        name: email.split('@')[0],
-      });
-      return true;
+  // 🔹 Check token on app load
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      setAdmin({ token }); // minimal state
     }
-    return false;
+    setLoading(false);
+  }, []);
+
+  // 🔹 LOGIN (uses backend)
+  const login = async (email, password) => {
+    try {
+      const res = await axios.post("http://localhost:5000/api/auth/login", {
+        email,
+        password,
+      });
+
+      localStorage.setItem("token", res.data.token);
+      setAdmin(res.data.admin);
+      return true;
+    } catch (err) {
+      return false;
+    }
   };
 
-  const register = async (email: string, password: string, name: string): Promise<boolean> => {
-    // Mock API call - replace with actual API
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    if (email && password && name) {
-      setUser({
-        id: '1',
-        email,
+  // 🔹 REGISTER (uses backend)
+  const register = async (email, password, name) => {
+    try {
+      await axios.post("http://localhost:5000/api/auth/register", {
         name,
+        email,
+        password,
       });
+
+      // ❗ After register, DO NOT auto-login blindly
       return true;
+    } catch (err) {
+      return false;
     }
-    return false;
   };
 
+  // 🔹 LOGOUT
   const logout = () => {
-    setUser(null);
+    localStorage.removeItem("token");
+    setAdmin(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated: !!user, login, register, logout }}>
-      {children}
+    <AuthContext.Provider
+      value={{
+        admin,
+        login,
+        register,
+        logout,
+        isAuthenticated: !!admin,
+        loading,
+      }}
+    >
+      {!loading && children}
     </AuthContext.Provider>
   );
 };
 
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-};
+export const useAuth = () => useContext(AuthContext);
+
+
+// import React, { createContext, useContext, useState, ReactNode } from 'react';
+// import { AdminUser } from '@/types/certificate';
+
+// interface AuthContextType {
+//   user: AdminUser | null;
+//   isAuthenticated: boolean;
+//   login: (email: string, password: string) => Promise<boolean>;
+//   register: (email: string, password: string, name: string) => Promise<boolean>;
+//   logout: () => void;
+// }
+
+// const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+// export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+//   const [user, setUser] = useState<AdminUser | null>(null);
+
+//   const login = async (email: string, password: string): Promise<boolean> => {
+//     // Mock API call - replace with actual API
+//     await new Promise(resolve => setTimeout(resolve, 1000));
+    
+//     if (email && password) {
+//       setUser({
+//         id: '1',
+//         email,
+//         name: email.split('@')[0],
+//       });
+//       return true;
+//     }
+//     return false;
+//   };
+
+//   const register = async (email: string, password: string, name: string): Promise<boolean> => {
+//     // Mock API call - replace with actual API
+//     await new Promise(resolve => setTimeout(resolve, 1000));
+    
+//     if (email && password && name) {
+//       setUser({
+//         id: '1',
+//         email,
+//         name,
+//       });
+//       return true;
+//     }
+//     return false;
+//   };
+
+//   const logout = () => {
+//     setUser(null);
+//   };
+
+//   return (
+//     <AuthContext.Provider value={{ user, isAuthenticated: !!user, login, register, logout }}>
+//       {children}
+//     </AuthContext.Provider>
+//   );
+// };
+
+// export const useAuth = () => {
+//   const context = useContext(AuthContext);
+//   if (!context) {
+//     throw new Error('useAuth must be used within an AuthProvider');
+//   }
+//   return context;
+// };
 // // // // import React, {
 // // // //   createContext,
 // // // //   useContext,

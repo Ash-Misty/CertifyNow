@@ -16,7 +16,7 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import UploadCertificates from "./pages/admin/UploadCertificates";
 import CertificateDesigner from "./pages/admin/CertificateDesigner";
 import AllocateCertificates from "./pages/admin/AllocateCertificates";
-
+import ProtectedRoute from "./components/ProtectedRoute";
 // Layout
 import { AdminLayout } from "@/components/layout/AdminLayout";
 
@@ -40,7 +40,14 @@ const App = () => (
               <Route path="/admin/register" element={<AdminRegister />} />
               
               {/* Admin Routes (Protected) */}
-              <Route path="/admin" element={<AdminLayout />}>
+             <Route
+  path="/admin"
+  element={
+    <ProtectedRoute>
+      <AdminLayout />
+    </ProtectedRoute>
+  }
+>
                 <Route path="dashboard" element={<AdminDashboard />} />
                 <Route path="upload" element={<UploadCertificates />} />
                 <Route path="design" element={<CertificateDesigner />} />

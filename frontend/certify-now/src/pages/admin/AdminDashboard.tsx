@@ -71,32 +71,42 @@ const AdminDashboard: React.FC = () => {
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
         <StatCard
-          title="Total Certificates"
-          value={stats.total}
-          icon={FileText}
-          variant="primary"
-          trend={{ value: 12, isPositive: true }}
-        />
+  title="Total Certificates"
+  value={stats.total.count}
+  icon={FileText}
+  trend={
+    stats.total.percent !== null
+      ? { value: stats.total.percent, isPositive: stats.total.percent > 0 }
+      : undefined
+  }
+/>
+
         <StatCard
-          title="Allocated"
-          value={stats.allocated}
-          icon={Award}
-          variant="accent"
-          trend={{ value: 8, isPositive: true }}
-        />
+  title="Allocated"
+  value={stats.allocated.count}
+  icon={Award}
+  trend={
+    stats.allocated.percent !== null
+      ? { value: stats.allocated.percent, isPositive: stats.allocated.percent > 0 }
+      : undefined
+  }
+/>
+       <StatCard
+  title="Verified"
+  value={stats.verified.count}
+  icon={CheckCircle}
+  trend={
+    stats.verified.percent !== null
+      ? { value: stats.verified.percent, isPositive: stats.verified.percent > 0 }
+      : undefined
+  }
+/>
         <StatCard
-          title="Verified"
-          value={stats.verified}
-          icon={CheckCircle}
-          variant="success"
-          trend={{ value: 15, isPositive: true }}
-        />
-        <StatCard
-          title="Pending"
-          value={stats.pending}
-          icon={Clock}
-          variant="warning"
-        />
+  title="Pending"
+  value={stats.pending.count}
+  icon={Clock}
+  // ⛔ usually no trend for pending
+/>
       </div>
 
       {/* Recent Certificates */}

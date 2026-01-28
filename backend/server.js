@@ -207,10 +207,41 @@
 // app.listen(PORT, () => {
 //   console.log(`🚀 Server running on port ${PORT}`);
 // });
-import dotenv from "dotenv";
-import app from "./app.js";
-import connectDB from "./src/config/db.js";
+// import dotenv from "dotenv";
+// import app from "./app.js";
+// import connectDB from "./src/config/db.js";
 
+// import authRoutes from "./src/routes/auth.js";
+// import adminDashboardRoutes from "./src/routes/adminDashboard.js";
+// import excelUploadRoute from "./src/routes/excelUpload.js";
+// import generateRoute from "./src/routes/generateCertificates.js";
+// import downloadRoute from "./src/routes/download.js";
+// import settingsRoutes from "./src/routes/settings.js";
+// import verifyRoute from "./src/routes/verify.js";
+
+// dotenv.config();
+// connectDB();
+// app.use(express.json());
+
+// app.use("/api/auth", authRoutes);
+// app.use("/api/admin", adminDashboardRoutes);
+// app.use("/api/admin", excelUploadRoute);
+// app.use("/api/admin", generateRoute);
+// app.use("/api/admin", settingsRoutes);
+
+// app.use("/api/certificate", downloadRoute);
+// app.use("/api/certificate", verifyRoute);
+
+// const PORT = process.env.PORT || 5000;
+// app.listen(PORT, () => console.log(`🚀 Server running on ${PORT}`));
+
+import express from "express";
+import dotenv from "dotenv";
+import connectDB from "./src/config/db.js";
+import cors from "cors";
+
+
+// Routes
 import authRoutes from "./src/routes/auth.js";
 import adminDashboardRoutes from "./src/routes/adminDashboard.js";
 import excelUploadRoute from "./src/routes/excelUpload.js";
@@ -219,10 +250,25 @@ import downloadRoute from "./src/routes/download.js";
 import settingsRoutes from "./src/routes/settings.js";
 import verifyRoute from "./src/routes/verify.js";
 
+
+// Load env
 dotenv.config();
+
+// App init
+const app = express();
+app.use(cors({
+  origin: "http://localhost:8080",
+  credentials: true
+}));
+
+// Middleware
+app.use(express.json());
+
+// DB
 connectDB();
 
-app.use("/api/admin", authRoutes);
+// Routes
+app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminDashboardRoutes);
 app.use("/api/admin", excelUploadRoute);
 app.use("/api/admin", generateRoute);
@@ -231,5 +277,8 @@ app.use("/api/admin", settingsRoutes);
 app.use("/api/certificate", downloadRoute);
 app.use("/api/certificate", verifyRoute);
 
+// Server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`🚀 Server running on ${PORT}`));
+app.listen(PORT, () =>
+  console.log(`🚀 Server running on port ${PORT}`)
+);

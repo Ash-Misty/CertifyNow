@@ -1,4 +1,3 @@
-
 import express from "express";
 import xlsx from "xlsx";
 import upload from "../config/multer.js";
@@ -24,32 +23,45 @@ router.post(
       const rows = xlsx.utils.sheet_to_json(sheet);
 
       let insertedCount = 0;
+for (const row of rows) {
+  const certificateId =
+    row.certificateId ||
+    row["Certificate ID"] ||
+    row["certificate_id"];
 
-      for (const row of rows) {
-        // 🚨 Skip if certificateId missing
-        if (!row.certificateId) continue;
+  const studentName =
+    row.studentName ||
+    row["Student Name"] ||
+    row["student_name"];
 
-        const exists = await Certificate.findOne({
-          certificateId: row.certificateId,
-        });
+  const domain = row.domain || row["Domain"];
+  const grade = row.grade || row["Grade"];
 
-        if (exists) continue; // skip duplicates
+  if (!certificateId || !studentName) continue;
 
-        // ✅ SAVE USING CORRECT SCHEMA FIELDS
-        await Certificate.create({
-          certificateId: row.certificateId,
-          studentName: row.studentName,
-          domain: row.domain,
-          grade: row.grade,
-          studentData: row,
-          templateUsed: "template1",
-          status: "pending",
-          issueDate: null,
-          pdfPath: null,
-        });
+  const exists = await Certificate.findOne({
+    certificateId,
+    createdBy: req.adminId,
+  });
 
-        insertedCount++;
-      }
+  if (exists) continue;
+
+  await Certificate.create({
+    certificateId,
+    studentName,
+    domain,
+    grade,
+    studentData: row,
+    templateUsed: "template1",
+    status: "pending",
+    issueDate: null,
+    pdfPath: null,
+    createdBy: req.adminId,
+  });
+
+  insertedCount++;
+}
+
 
       res.json({
         message: "Excel data stored successfully",

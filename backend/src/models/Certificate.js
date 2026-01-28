@@ -16,6 +16,11 @@ const certificateSchema = new mongoose.Schema(
       enum: ["pending", "generated"],
       default: "pending",
     },
+      createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Admin",
+    required: true
+  }
   },
   { timestamps: true }
 );
