@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      border: 10px solid #0d47a1;
+      padding: 50px;
+      width: 1000px;
+      height: 700px;
+    }
+    h1 {
+      color: #0d47a1;
+      font-size: 48px;
+    }
+    .content {
+      margin-top: 40px;
+      font-size: 22px;
+    }
+    .footer {
+      margin-top: 60px;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Certificate of Completion</h1>
+
+  <div class="content">
+    This is to certify that  
+    <h2>{{studentName}}</h2>
+
+    has successfully completed the course  
+
+    <h2>{{domain}}</h2>
+
+    with grade  
+
+    <h2>{{grade}}</h2>
+
+    Certificate ID: <b>{{certificateId}}</b>
+  </div>
+
+  <div class="footer">
+    Issued on: {{issueDate}} <br><br>
+    Authorized Signature
+  </div>
+</body>
+</html>

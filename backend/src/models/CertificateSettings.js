@@ -25,9 +25,10 @@ const settingsSchema = new mongoose.Schema({
   authorizedBy: String,
   logo: String,
   signature: String,
-  createdBy: {
+   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Admin"
+    ref: "Admin",
+    required: true
   }
 });
 

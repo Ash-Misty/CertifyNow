@@ -1,65 +1,28 @@
-// import mongoose from "mongoose";
-
-// const certificateSchema = new mongoose.Schema({
-//   certificateId: {
-//     type: String,
-//     required: true,
-//     unique: true
-//   },
-//   name: {
-//     type: String,
-//     required: true
-//   },
-//   domain: {
-//     type: String,
-//     required: true
-//   },
-//   startDate: String,
-//   endDate: String,
-//   issueDate: {
-//     type: Date,
-//     default: Date.now
-//   }
-// });
-
-// export default mongoose.model("Certificate", certificateSchema);
 
 import mongoose from "mongoose";
 
-const certificateSchema = new mongoose.Schema({
-  certificateId: {
-    type: String,
-    required: true,
-    unique: true
-  },
-
-  // 🔥 Dynamic student data
-  studentData: {
-    type: Object,
+const certificateSchema = new mongoose.Schema(
+  {
+    studentName: String,
+    certificateId: { type: String, unique: true },
+    domain: String,
+    grade: String,
+    studentData: Object,
+    templateUsed: String,
+    pdfPath: String,
+    issueDate: Date,
+    status: {
+      type: String,
+      enum: ["pending", "generated"],
+      default: "pending",
+    },
+      createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Admin",
     required: true
+  }
   },
-
-  // 🔥 Which template was used
-  templateUsed: {
-    type: String,
-    default: "template1"
-  },
-
-  // 🔥 Generated PDF path
-  pdfPath: {
-    type: String
-  },
-
-  issueDate: {
-    type: Date,
-    default: Date.now
-  },
-  status: {
-  type: String,
-  enum: ["pending", "generated"],
-  default: "pending"
-}
-
-});
+  { timestamps: true }
+);
 
 export default mongoose.model("Certificate", certificateSchema);
